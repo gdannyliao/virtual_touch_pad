@@ -16,6 +16,9 @@ import android.view.WindowManager.LayoutParams;
  * Created by LiaoXingyu on 3/20/16.
  */
 public class TouchPad implements View.OnClickListener, View.OnTouchListener {
+	static {
+		System.loadLibrary("virtual_mouse");
+	}
 	private static final String TAG = "TouchPad";
 	private final int height;
 	private final int width;
@@ -32,6 +35,9 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 
 
 	public TouchPad(final Context context) {
+		boolean open = open();
+		Log.d(TAG, "TouchPad() called with: " + "open = [" + open + "]");
+
 		this.context = context;
 		windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		Display display = windowManager.getDefaultDisplay();
@@ -95,4 +101,8 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 		layoutParams.y += dy;
 		windowManager.updateViewLayout(view, layoutParams);
 	}
+
+	private native void mouseMove(int x, int y);
+
+	private native boolean open();
 }
