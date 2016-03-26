@@ -11,11 +11,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by LiaoXingyu on 3/20/16.
  */
 public class TouchPad implements View.OnClickListener, View.OnTouchListener {
+	public static final String DEVICE_PATH = "/dev/uinput";
+
 	static {
 		System.loadLibrary("virtual_mouse");
 	}
@@ -35,8 +39,21 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 
 
 	public TouchPad(final Context context) {
-		boolean open = open();
-		Log.d(TAG, "TouchPad() called with: " + "open = [" + open + "]");
+		File dev = new File(DEVICE_PATH);
+
+		boolean pmsGot = false;
+		try {
+			pmsGot = getPermission(dev);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		int res = open();
+		Log.d(TAG, "TouchPad() called with: " + "open res = [" + res + "]");
+		if (res != 1) {
+			throw new IllegalStateException("open failed");
+		}
 
 		this.context = context;
 		windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -58,6 +75,16 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 		layoutParams.width = 250;
 		layoutParams.height = 250;
 		windowManager.addView(view, layoutParams);
+	}
+
+	private boolean getPermission(File dev) throws IOException, InterruptedException {
+		Process su = Runtime.getRuntime().exec("su");
+		String cmd = "chmod 666 " + dev.getAbsolutePath() + "\n" + "exit\n";
+		su.getOutputStream().write(cmd.getBytes());
+		if ((su.waitFor() != 0) || !dev.canRead() || !dev.canWrite()) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override public void onClick(View v) {
@@ -104,5 +131,5 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 
 	private native void mouseMove(int x, int y);
 
-	private native boolean open();
+	private native int open();
 }
