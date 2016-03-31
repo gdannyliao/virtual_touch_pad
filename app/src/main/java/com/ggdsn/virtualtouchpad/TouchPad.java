@@ -23,6 +23,7 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 	static {
 		System.loadLibrary("virtual_mouse");
 	}
+
 	private static final String TAG = "TouchPad";
 	private final int height;
 	private final int width;
@@ -33,10 +34,11 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 	private float lastx;
 	private float lasty;
 
+	private int speedTimes = 3;
+
 	Context context;
 	WindowManager windowManager;
 	private final View view;
-
 
 	public TouchPad(final Context context) {
 		File dev = new File(DEVICE_PATH);
@@ -120,13 +122,14 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 
 		return true;
 	}
-//TODO 添加对鼠标的控制
+
 	private void updateViewPosition(float x, float y) {
 		int dx = (int) (x - lastx);
 		int dy = (int) (y - lasty);
 		layoutParams.x += dx;
 		layoutParams.y += dy;
 		windowManager.updateViewLayout(view, layoutParams);
+		mouseMove(dx * speedTimes, dy * speedTimes);
 	}
 
 	private native void mouseMove(int x, int y);

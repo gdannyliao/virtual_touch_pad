@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
  */
 public class TouchPadService extends Service {
 
+	private static final String TAG = "TouchPadService";
 	private TouchPad touchPad;
 
 	@Nullable @Override public IBinder onBind(Intent intent) {
