@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 	public static final String DEVICE_PATH = "/dev/uinput";
+	private static final float IGNORE_RANGE = 5;
 
 	static {
 		System.loadLibrary("virtual_mouse");
@@ -34,11 +35,13 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 	private float lastx;
 	private float lasty;
 
-	private int speedTimes = 3;
+	private int speedTimes = 1;
 
 	Context context;
 	WindowManager windowManager;
 	private final View view;
+	private float startx;
+	private float starty;
 
 	public TouchPad(final Context context) {
 		File dev = new File(DEVICE_PATH);
@@ -107,6 +110,8 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 				currenty = y;
 				lastx = x;
 				lasty = y;
+				startx = x;
+				starty = y;
 				break;
 			case MotionEvent.ACTION_MOVE:
 				currentx = x;
@@ -116,7 +121,9 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 				lasty = y;
 				break;
 			case MotionEvent.ACTION_UP:
+				if (Math.abs(startx - currentx) < IGNORE_RANGE && Math.abs(starty - currenty) < IGNORE_RANGE) {
 
+				}
 				break;
 		}
 
@@ -124,15 +131,17 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 	}
 
 	private void updateViewPosition(float x, float y) {
-		int dx = (int) (x - lastx);
-		int dy = (int) (y - lasty);
+		float dx = (x - lastx);
+		float dy = (y - lasty);
 		layoutParams.x += dx;
 		layoutParams.y += dy;
+		Log.d(TAG, "updateViewPosition() called with: " + "dx = [" + dx + "], dy = [" + dy + "]");
 		windowManager.updateViewLayout(view, layoutParams);
 		mouseMove(dx * speedTimes, dy * speedTimes);
 	}
 
-	private native void mouseMove(int x, int y);
+	private native void click(float x, float y);
+	private native void mouseMove(float x, float y);
 
 	private native int open();
 }

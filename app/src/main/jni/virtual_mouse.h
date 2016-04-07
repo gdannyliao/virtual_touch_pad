@@ -13,4 +13,7 @@ Java_com_ggdsn_virtualtouchpad_TouchPad_mouseMove(JNIEnv *env, jobject instance,
 JNIEXPORT jboolean JNICALL
 Java_com_ggdsn_virtualtouchpad_TouchPad_open(JNIEnv *env, jobject instance);
 
+JNIEXPORT void JNICALL
+Java_com_ggdsn_virtualtouchpad_TouchPad_click(JNIEnv *env, jobject instance, jfloat x, jfloat y);
+
 #endif //VIRTUAL_TOUCH_PAD_VRITUALMOUSE_H
