@@ -122,7 +122,8 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 				break;
 			case MotionEvent.ACTION_UP:
 				if (Math.abs(startx - currentx) < IGNORE_RANGE && Math.abs(starty - currenty) < IGNORE_RANGE) {
-
+					Log.d(TAG, "onTouch: click:" + startx + " y:" + starty);
+					click(startx, starty);
 				}
 				break;
 		}

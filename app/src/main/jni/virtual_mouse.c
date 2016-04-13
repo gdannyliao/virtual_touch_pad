@@ -58,8 +58,13 @@ Java_com_ggdsn_virtualtouchpad_TouchPad_mouseMove(JNIEnv *env, jobject instance,
 
 JNIEXPORT void JNICALL
 Java_com_ggdsn_virtualtouchpad_TouchPad_click(JNIEnv *env, jobject instance, jfloat x, jfloat y) {
-    //FIXME ！！！ 添加点击事件
-//    if (send(EV_KEY, ))
+    __android_log_print(ANDROID_LOG_DEBUG, TAG, "click: %f, %f", x, y);
+    send(EV_KEY, BTN_MOUSE, 1);
+    send(EV_SYN, SYN_REPORT, 0);
+
+    send(EV_KEY, BTN_MOUSE, 0);
+    send(EV_SYN, SYN_REPORT, 0);
+    //FIXME 貌似鼠标可以点击了，但点击的位置应该不正确。点击自己了，造成一直会有鼠标事件
 }
 
 JNIEXPORT jint JNICALL
@@ -74,6 +79,7 @@ Java_com_ggdsn_virtualtouchpad_TouchPad_open(JNIEnv *env, jobject instance) {
     ioctl(fd, UI_SET_EVBIT, EV_REL);
     ioctl(fd, UI_SET_RELBIT, REL_X);
     ioctl(fd, UI_SET_RELBIT, REL_Y);
+    ioctl(fd, UI_SET_KEYBIT, BTN_LEFT);
     //显示鼠标的关键一行
     ioctl(fd, UI_SET_KEYBIT, BTN_MOUSE);
 
