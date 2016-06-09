@@ -139,6 +139,7 @@ public class TouchPad implements View.OnClickListener, View.OnTouchListener {
 		Log.d(TAG, "updateViewPosition() called with: " + "dx = [" + dx + "], dy = [" + dy + "]");
 		windowManager.updateViewLayout(view, layoutParams);
 		mouseMove(dx * speedTimes, dy * speedTimes);
+		//TODO 将触摸板分成两个view
 	}
 
 	private native void click(float x, float y);
